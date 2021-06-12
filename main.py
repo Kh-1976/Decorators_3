@@ -4,21 +4,21 @@ from datetime import datetime as dt
 import os
 
 
-def decorator_function(fn):
-
-    def foo(*args, **kwargs):
-        result = fn(*args) + '!'
-        path = kwargs['path']
-        logging.basicConfig(filename=os.path.join(path, 'logger.log'), level=logging.INFO)
-        logging.info([str(dt.now())[:-7], fn.__name__, *args, result])
-        return result
-    return foo
+def parametrized_decor(parameter):
+    def decorator_function(fn):
+        def foo(*args):
+            logging.basicConfig(filename=os.path.join(parameter, 'logger.log'), level=logging.INFO)
+            result = fn(*args) + '!'
+            logging.info([str(dt.now())[:-7], fn.__name__, *args, result])
+            return result
+        return foo
+    return decorator_function
 
 
 lst_heroes = ['Hulk', 'Captain America', 'Thanos']
 
 
-@decorator_function
+@parametrized_decor(parameter='C:\\Logs')
 def intelligence_max(lst_heroes):
     url = "https://superheroapi.com/api/2619421814940190/search/"
     max_intelligence, hero = 0, ''
@@ -32,4 +32,4 @@ def intelligence_max(lst_heroes):
     return hero
 
 
-print(intelligence_max(lst_heroes, path='C:\\Logs'))
+print(intelligence_max(lst_heroes))
